@@ -1,0 +1,27 @@
+#端口号
+server:
+ port: 8080 
+#Spring的配置
+spring:
+ datasource:
+  #数据源
+  type: com.alibaba.druid.pool.DruidDataSource
+  #驱动
+  driver-class-name: com.mysql.jdbc.Driver
+  #数据库连接
+  url: jdbc:mysql://localhost:3306/demo1?characterEncoding=utf-8
+  #用户名
+  username: root
+  #密码
+  password: 123
+
+ mvc:
+  view:
+   prefix: /
+   suffix: .jsp
+#配置mybatis
+mybatis:
+ #实体类包
+ type-aliases-package: com.wbc.graduation.domain
+ #配置mapping路径
+ mapper-locations: classpath:mybatis-mapping/*.xml
