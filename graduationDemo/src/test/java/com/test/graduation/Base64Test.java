@@ -26,7 +26,7 @@ public class Base64Test {
 		return new String (b,ENCODEING);
 	}
 	public static void main(String[] args) throws Exception {
-		String data = "abc";
+		String data = "abc你好";
 		System.out.println(data);
 		
 		String data_base64 = encode(data);
