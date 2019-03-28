@@ -1,6 +1,10 @@
 package com.test.graduation;
-public class MD5Test2 {
 
+
+import com.wbc.graduation.exception.Md5EncodeException;
+import com.wbc.graduation.util.MD5diyUtils;
+
+public class MD5Test2 {
 	//存储小组
     long []groups = null;
     //存储结果
@@ -15,7 +19,9 @@ public class MD5Test2 {
     //java不支持无符号的基本数据(unsigned),所以选用long数据类型
     private long [] result={A,B,C,D};
     
-    static final long T[][] = {
+    //算法中常数M[i][j],赋值规则为4294967296*abs(sin(i))的整数部分，i是当前轮换次数，单位是弧度
+    //这里方便起见，将所有值列在数组M[][]下
+    static final long M[][] = {
     		{0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
     		0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,
     		0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
@@ -35,6 +41,7 @@ public class MD5Test2 {
     		0x655b59c3, 0x8f0ccc92, 0xffeff47d, 0x85845dd1,
     		0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1,
     		0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391}};
+    
     //表示X[k]中的的k取值，决定如何使用消息分组中的字
     static final int k[][] = {
     		{0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15},
@@ -43,7 +50,7 @@ public class MD5Test2 {
     		{0, 7,14, 5,12, 3,10, 1, 8,15, 6,13, 4,11, 2, 9}};
     
     //各次迭代中采用的做循环移位的s值
-    static final int S[][] = {
+    static final int MOVE[][] = {
     		{7,12,17,22},
     		{5,9,14,20},
     		{4,11,16,23},
@@ -134,11 +141,43 @@ public class MD5Test2 {
         }
         //将Hash值转换成十六进制的字符串
         //小端方式!
+        
+        
+        //这里的if语句修复了一个bug，
+        //当将该16进制数result[i]进行“&”操作时，当出现诸如“0e”&“ff”时，会导致“0”被忽略，最终导致密文因缺0而不足32位，也就不满足md5加密算法
         for(int i=0;i<4;i++){
-        	resultMessage += Long.toHexString(result[i] & 0xFF) +
-            		Long.toHexString((result[i] & 0xFF00) >> 8) +
-            		Long.toHexString((result[i] & 0xFF0000) >> 16) +
-            		Long.toHexString((result[i] & 0xFF000000) >> 24);
+        	if (Long.toHexString(result[i] & 0xFF).length() == 1) {
+        		resultMessage += "0"+
+        				Long.toHexString(result[i] & 0xFF) +
+	            		Long.toHexString((result[i] & 0xFF00) >> 8) +
+	            		Long.toHexString((result[i] & 0xFF0000) >> 16) +
+	            		Long.toHexString((result[i] & 0xFF000000) >> 24);;
+        	}else if(Long.toHexString(result[i] & 0xFF00).length() == 3){
+        		resultMessage += Long.toHexString(result[i] & 0xFF) +
+	            		"0" +
+        				Long.toHexString((result[i] & 0xFF0000) >> 8)+
+	            		Long.toHexString((result[i] & 0xFF0000) >> 16) +
+	            		Long.toHexString((result[i] & 0xFF000000) >> 24);
+        	}else if(Long.toHexString(result[i] & 0xFF0000).length() == 5){
+        		resultMessage += Long.toHexString(result[i] & 0xFF) +
+	            		Long.toHexString((result[i] & 0xFF00) >> 8) +
+	            		"0" +
+	            		Long.toHexString((result[i] & 0xFF0000) >> 16) +
+	            		Long.toHexString((result[i] & 0xFF000000) >> 24);
+        		
+        	}else if(Long.toHexString(result[i] & 0xFF000000).length() == 7){
+        		resultMessage += Long.toHexString(result[i] & 0xFF) +
+	            		Long.toHexString((result[i] & 0xFF00) >> 8) +
+	            		Long.toHexString((result[i] & 0xFF0000) >> 16) +
+	            		"0"+
+	            		Long.toHexString((result[i] & 0xFF000000) >> 24);
+        		
+        	}else{
+	        	resultMessage += Long.toHexString(result[i] & 0xFF) +
+	            		Long.toHexString((result[i] & 0xFF00) >> 8) +
+	            		Long.toHexString((result[i] & 0xFF0000) >> 16) +
+	            		Long.toHexString((result[i] & 0xFF000000) >> 24);
+        	}
   
         }
         return resultMessage;
@@ -173,8 +212,8 @@ public class MD5Test2 {
         for(int n = 0; n < 4; n++) {
         	//16轮迭代
         	for(int i = 0; i < 16; i++) {
-            	result[0] += (g(n, result[1], result[2], result[3])&0xFFFFFFFFL) + groups[k[n][i]] + T[n][i];
-                result[0] = result[1] + ((result[0]&0xFFFFFFFFL)<< S[n][i % 4] | ((result[0]&0xFFFFFFFFL) >>> (32 - S[n][i % 4])));
+            	result[0] += (g(n, result[1], result[2], result[3])&0xFFFFFFFFL) + groups[k[n][i]] + M[n][i];
+                result[0] = result[1] + ((result[0]&0xFFFFFFFFL)<< MOVE[n][i % 4] | ((result[0]&0xFFFFFFFFL) >>> (32 - MOVE[n][i % 4])));
                 //循环轮换
                 long temp = result[3];
                 result[3] = result[2];
@@ -193,13 +232,16 @@ public class MD5Test2 {
         	result[n] &=0xFFFFFFFFL;
         }
     }
-    
-    public static void main(String []args){
+    public static void main(String []args) throws Md5EncodeException{
+    	
         MD5Test2 md=new MD5Test2();
-        String message = "helloMD5";
+        String message = "123";
+        
+        String md5_str2 = new MD5diyUtils().encrypt16(message);
         System.out.println("MD5-Algorithm:\n\nOrigin Message: " + message);
-        System.out.println("Result Message: " + md.start(message));
-        System.out.println("Result Message(UpperCase): " + md.resultMessage.toUpperCase());
+        System.out.println("Result Message: " + md5_str2);
+        System.out.println("Message length:"+md5_str2.length());
+        System.out.println("Result Message(UpperCase): " + md5_str2.toUpperCase());
         //F0F99260B5A02508C71F6D81C15E9A44
         //3ED9E5F6855DBCDBCD95AC6C4FE0C0A5
     }

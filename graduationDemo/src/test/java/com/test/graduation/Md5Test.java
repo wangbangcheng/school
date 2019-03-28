@@ -14,7 +14,7 @@ public class Md5Test {
 		return newstr;
 	}
 	public static void main(String[] args) {
-		String data = "41332341513516616166111111111111111111111111111111111111111111111111111111111111111111116";
+		String data = "123";
 	
 		
 		try {

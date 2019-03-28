@@ -15,7 +15,7 @@
 	<input type="password" id= "password" name="password" value="" ><span style="color:red">${msg2}</span><br>
 	<input type="submit" value="注册">
 	<input type="reset"><br>
-	<a href="${pageContext.request.contextPath} }">跳转至登录页面</a>
+	<a href="${pageContext.request.contextPath}/Login.jsp}">跳转至登录页面</a>
 </form>
 
 

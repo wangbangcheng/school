@@ -45,7 +45,7 @@ public class ServerTest implements Runnable{
 	        }
 	    }
 
-	    public static void receiveFile(Socket socket) throws IOException {
+	    private static void receiveFile(Socket socket) throws IOException {
 	        byte[] inputByte = null;
 	        int length = 0;
 	        DataInputStream dis = null;
@@ -80,7 +80,7 @@ public class ServerTest implements Runnable{
 	                socket.close();
 	        }
 	    }
-	    public static String createRandomNo(){
+	    private static String createRandomNo(){
 	    	String randomNo = null;
 	    	//改变输出格式（自己想要的格式） 
 	    	SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmSS"); 
