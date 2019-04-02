@@ -11,6 +11,8 @@ import java.util.Date;
 
 public class ServerTest implements Runnable{
 	
+	
+	
 	private static int num = 1;
 	 @Override
 	    public void run() {
@@ -50,10 +52,14 @@ public class ServerTest implements Runnable{
 	        int length = 0;
 	        DataInputStream dis = null;
 	        FileOutputStream fos = null;
+	        File file_encrypt = null;
+	        String encrypt_title = null;
 	        try {
 	        	dis = new DataInputStream(socket.getInputStream());
-	            
-	        	fos = new FileOutputStream(new File("E:\\serverTest\\"+createRandomNo()+dis.readUTF()));
+	        	encrypt_title = "E:\\serverTest\\"+dis.readUTF();
+	        	file_encrypt = new File(encrypt_title);
+	        	
+	        	fos = new FileOutputStream(file_encrypt);
 	            inputByte = new byte[1024];
 	            System.out.println("开始接收数据...");
 	            while (true) {
@@ -63,12 +69,15 @@ public class ServerTest implements Runnable{
 	                if (length == -1) {
 	                    break;
 	                }
-	                System.out.println();
 	                System.out.println(length);
 	                fos.write(inputByte, 0, length);
 	                fos.flush();
 	            }
-	            System.out.println("完成接收");
+	            System.out.println("成功接收加密文件");
+	            //des加密 
+	           
+	          
+	            
 	        } catch (Exception ex) {
 	            ex.printStackTrace();
 	        } finally {
@@ -78,6 +87,13 @@ public class ServerTest implements Runnable{
 	            	dis.close();
 	            if (socket != null)
 	                socket.close();
+	           
+	            try {
+					FileDesTest.decrypt("E:\\serverTest\\123encrypt.jpg", "E:\\serverTest\\111.jpg");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 	        }
 	    }
 	    private static String createRandomNo(){
@@ -85,7 +101,7 @@ public class ServerTest implements Runnable{
 	    	//改变输出格式（自己想要的格式） 
 	    	SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmSS"); 
 	    	//得到字符串时间 
-	    	randomNo = formatter.format(new Date())+num;
+	    	randomNo = formatter.format(new Date()).substring(3,9)+num;
 	    	num++;
 	    	return randomNo;
 	    }
