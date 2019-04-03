@@ -23,7 +23,7 @@ public class RecFileUtils implements Runnable{
 
 	public static void serverRecSocket() {
         try {
-            final ServerSocket server = new ServerSocket(12345);
+            final ServerSocket server = new ServerSocket(5203);
             Thread th = new Thread(new Runnable() {
 
                 @Override
