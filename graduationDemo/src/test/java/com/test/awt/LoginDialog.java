@@ -13,11 +13,27 @@ import javax.swing.JLabel;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
 import javax.swing.ImageIcon;
 import javax.swing.border.TitledBorder;
 
+import org.apache.taglibs.standard.tag.common.core.OutSupport;
+import org.apache.tomcat.jni.OS;
+
+import com.alibaba.druid.util.StringUtils;
 import com.test.awt.ImageScale;
+import com.wbc.graduation.exception.Md5EncodeException;
+import com.wbc.graduation.util.MD5diyUtils;
 
 @SuppressWarnings("serial")
 public class LoginDialog extends JDialog {
@@ -30,11 +46,100 @@ public class LoginDialog extends JDialog {
     private JTextField textField_3;
     private JTextField textField_4;
     private JTextField textField_5;
-
+    //登录窗体宽高及扩展高
     private static final int DIALOG_WIDTH=374;
     private static final int DIALOG_HEIGHT=290;
     private static final int DIALOG_HEIGHT_EXTEND=540;
-
+    
+    //host和端口
+    private static final int port = 10001;
+    private static final int port_file = 10010;
+    private static final String hostIP = "127.0.0.1";
+    //登录/注册
+    private Socket client_socket;
+    private InputStream client_is;
+    private PrintWriter pw;
+    private OutputStream client_os;
+    private BufferedReader br;
+    private int length;
+    //文件传输
+    private Socket client_socket_file;
+    private InputStream client_is_file;
+    private OutputStream client_os_file;
+    
+    //工具类
+    
+    
+	private void connectServer(int port) {
+		// TODO Auto-generated method stub	
+		try {
+			System.out.println("登录验证socket开启...");
+			client_socket = new Socket();
+			client_socket.connect(new InetSocketAddress(hostIP, port),10 * 1000);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/**提交登录/注册信息给服务端
+	 * @param user			用户名
+	 * @param password		密码
+	 * @param flag			1-登录/2-注册
+	 * @param  String 		flag|user|password
+	 * @return String		1|s|登录成功
+	 * 						1|f|登录失败
+	 * 						2|s|注册成功
+	 * 						2|f|注册失败
+	 * 						3|异常输入
+	 */
+	private String transmitData(String username,String password,int flag){
+		String request = "";
+		String response = "";
+		MD5diyUtils md5 = new MD5diyUtils();
+		try {
+			if(flag == 1){
+				request = "1|"+ username + "|"+md5.encrypt16(password);
+			}else if(flag == 2){
+				request = "2|"+ username + "|"+md5.encrypt16(password);
+			}else{
+				return "3|非法输入格式";
+			}
+			System.out.println(request);
+			//输入/输出流
+			client_os=client_socket.getOutputStream();
+			pw=new PrintWriter(client_os);
+			client_is=client_socket.getInputStream();
+            br=new BufferedReader(new InputStreamReader(client_is));
+			//发送登录/注册信息
+            pw.write(request);
+            pw.flush();
+            client_socket.shutdownOutput();
+            //接收信息
+            String rece = null ;
+            while (!((rece = br.readLine())==null)){
+            	System.out.println("接收信息如下:"+rece);
+            	response += rece;
+            }
+            //关闭资源
+            br.close();
+            client_is.close();
+            pw.close();
+            client_os.close();
+            client_socket.close();
+            
+            return response;
+		} catch (Md5EncodeException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return response;
+		
+	}
+    
     /**
      * Launch the application.
      */
@@ -54,6 +159,7 @@ public class LoginDialog extends JDialog {
      * Create the dialog.
      */
     public LoginDialog() {
+    	connectServer(port);
     	setTitle("客户端登录/验证");
         setAlwaysOnTop(true);
         setResizable(false);
@@ -87,18 +193,24 @@ public class LoginDialog extends JDialog {
         	//登录成功后切换成传输文件页面
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				JFrame main = new JFrame();
-				main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//关闭窗口将退出程序
-				main.setBounds(400,150,800,600);
-	            main.setVisible(true);
-	            main.setTitle("传输界面");
-	            main.setContentPane(contentPanel_main);
-	            JFileChooser Jfile = new JFileChooser();
-	            Jfile.setBorder(new TitledBorder(null, "传输文件", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-	            contentPanel_main.add(Jfile);
-	            
-	            LoginDialog.this.setVisible(false);
+				// TODO 登录事件
+				if(!StringUtils.isEmpty(textField.getText())&&!StringUtils.isEmpty(textField_1.getText())){
+					
+					String response = transmitData(textField.getText(),textField_1.getText(),1);
+					JFrame main = new JFrame();
+					main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//关闭窗口将退出程序
+					main.setBounds(400,150,500,360);
+		            main.setVisible(true);
+		            main.setTitle("传输界面");
+		            main.setContentPane(contentPanel_main);
+		            JFileChooser Jfile = new JFileChooser();
+		            Jfile.setBorder(new TitledBorder(null, "传输文件", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		            contentPanel_main.add(Jfile);
+		
+		            
+		            LoginDialog.this.setVisible(false);
+					
+				}
 			}
         	
         	
@@ -185,6 +297,8 @@ public class LoginDialog extends JDialog {
         btnNewButton_4.setBounds(190, 182, 83, 27);
         panel.add(btnNewButton_4);
     }
+
+
 }
 
 
