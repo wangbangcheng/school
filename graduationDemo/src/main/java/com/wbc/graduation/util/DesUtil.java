@@ -1,4 +1,4 @@
-package com.test.graduation;
+package com.wbc.graduation.util;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

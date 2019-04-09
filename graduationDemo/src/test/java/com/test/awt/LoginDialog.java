@@ -1,12 +1,14 @@
 package com.test.awt;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -14,21 +16,18 @@ import javax.swing.JLabel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.border.TitledBorder;
-
-import org.apache.taglibs.standard.tag.common.core.OutSupport;
-import org.apache.tomcat.jni.OS;
 
 import com.alibaba.druid.util.StringUtils;
 import com.test.awt.ImageScale;
@@ -39,21 +38,19 @@ import com.wbc.graduation.util.MD5diyUtils;
 public class LoginDialog extends JDialog {
 
     private final JPanel contentPanel = new JPanel();
-    private final JPanel contentPanel_main = new JPanel();
     private JTextField textField;
-    private JTextField textField_1;
+    private JPasswordField passwordField_1;
     private JTextField textField_2;
     private JTextField textField_3;
-    private JTextField textField_4;
-    private JTextField textField_5;
+    private JPasswordField passwordField_2;
+    private JPasswordField passwordField_3;
     //登录窗体宽高及扩展高
     private static final int DIALOG_WIDTH=374;
     private static final int DIALOG_HEIGHT=290;
-    private static final int DIALOG_HEIGHT_EXTEND=540;
+    private static final int DIALOG_HEIGHT_EXTEND=560;
     
     //host和端口
-    private static final int port = 10001;
-    private static final int port_file = 10010;
+    private static final int port = 10011;
     private static final String hostIP = "127.0.0.1";
     //登录/注册
     private Socket client_socket;
@@ -61,27 +58,38 @@ public class LoginDialog extends JDialog {
     private PrintWriter pw;
     private OutputStream client_os;
     private BufferedReader br;
-    private int length;
-    //文件传输
-    private Socket client_socket_file;
-    private InputStream client_is_file;
-    private OutputStream client_os_file;
+
+
     
-    //工具类
-    
-    
+    //请求连接服务端
 	private void connectServer(int port) {
 		// TODO Auto-generated method stub	
 		try {
-			System.out.println("登录验证socket开启...");
+			System.out.println("请求连接服务端");
 			client_socket = new Socket();
 			client_socket.connect(new InetSocketAddress(hostIP, port),10 * 1000);
+			System.out.println("请求成功");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+	//关闭socket
+	private void closeConnect() {
+		if(client_socket != null) {
+			try {
+				client_socket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	//刷新连接
+	private void RefreshSocket(int port) {
+		closeConnect();
+		connectServer(port);
+	}
 	
 	/**提交登录/注册信息给服务端
 	 * @param user			用户名
@@ -92,7 +100,7 @@ public class LoginDialog extends JDialog {
 	 * 						1|f|登录失败
 	 * 						2|s|注册成功
 	 * 						2|f|注册失败
-	 * 						3|异常输入
+	 * 						3||异常输入
 	 */
 	private String transmitData(String username,String password,int flag){
 		String request = "";
@@ -104,7 +112,7 @@ public class LoginDialog extends JDialog {
 			}else if(flag == 2){
 				request = "2|"+ username + "|"+md5.encrypt16(password);
 			}else{
-				return "3|非法输入格式";
+				return "3||非法输入格式";
 			}
 			System.out.println(request);
 			//输入/输出流
@@ -194,21 +202,32 @@ public class LoginDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO 登录事件
-				if(!StringUtils.isEmpty(textField.getText())&&!StringUtils.isEmpty(textField_1.getText())){
+				if(!StringUtils.isEmpty(textField.getText())&&!StringUtils.isEmpty(passwordField_1.getText())){
 					
-					String response = transmitData(textField.getText(),textField_1.getText(),1);
-					JFrame main = new JFrame();
-					main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//关闭窗口将退出程序
-					main.setBounds(400,150,500,360);
-		            main.setVisible(true);
-		            main.setTitle("传输界面");
-		            main.setContentPane(contentPanel_main);
-		            JFileChooser Jfile = new JFileChooser();
-		            Jfile.setBorder(new TitledBorder(null, "传输文件", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		            contentPanel_main.add(Jfile);
-		
-		            
-		            LoginDialog.this.setVisible(false);
+					String response = transmitData(textField.getText(),passwordField_1.getText(),1);
+					String[] resp_arr = response.split("\\|");
+					if("s".equals(resp_arr[1])) {
+						SendFileFrame sendFile = new SendFileFrame();
+						sendFile.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+						sendFile.setVisible(true);
+			
+			            //原页面隐藏
+			            LoginDialog.this.setVisible(false);
+					}else {
+						JFrame warning = new JFrame();
+						warning.setBounds(400, 150, DIALOG_WIDTH,DIALOG_HEIGHT);
+						warning.setVisible(true);
+						warning.setTitle("登录失败");
+			            JPanel Panel_warning = new JPanel();
+			            warning.setContentPane(Panel_warning);
+			            JLabel label_warning = new JLabel(resp_arr[2]);
+			            Panel_warning.add(label_warning);
+			            
+			            RefreshSocket(port);
+			            
+					}
+					
+					
 					
 				}
 			}
@@ -222,10 +241,15 @@ public class LoginDialog extends JDialog {
         contentPanel.add(textField);
         textField.setColumns(10);
 
-        textField_1 = new JTextField();
-        textField_1.setBounds(133, 182, 150, 25);
-        contentPanel.add(textField_1);
-        textField_1.setColumns(10);
+//        textField_1 = new JTextField();
+//        textField_1.setBounds(133, 182, 150, 25);
+//        contentPanel.add(textField_1);
+//        textField_1.setColumns(10);
+        
+        passwordField_1 = new JPasswordField();
+        passwordField_1.setBounds(133, 182, 150, 25);
+        contentPanel.add(passwordField_1);
+        passwordField_1.setColumns(10);
 
         JLabel lblNewLabel = new JLabel("用户名");
         lblNewLabel.setBounds(53, 151, 54, 15);
@@ -238,14 +262,20 @@ public class LoginDialog extends JDialog {
         JLabel lblNewLabel_2 = new JLabel("登录");     
         lblNewLabel_2.setBounds(5, 0, 360, 136);
         //TODO
-        ImageIcon icon=new ImageIcon(LoginDialog.class.getResource("timg.jpg"));
+        //登录主页面插图
+        String path = LoginDialog.class.getResource("\\").getPath();
+        System.out.println(path);
+        path = path.substring(0,path.lastIndexOf("/")) + "/timg.jpg";
+        
+        System.out.println(path);
+        ImageIcon icon=new ImageIcon(path);
         icon=ImageScale.getImage(icon, lblNewLabel_2.getWidth(), lblNewLabel_2.getHeight());
         lblNewLabel_2.setIcon((icon));
         contentPanel.add(lblNewLabel_2);
 
         JPanel panel = new JPanel();
         panel.setBorder(new TitledBorder(null, "\u6CE8\u518C\u7528\u6237", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        panel.setBounds(12, 259, 336, 221);
+        panel.setBounds(12, 259, 336, 240);
         contentPanel.add(panel);
         panel.setLayout(null);
 
@@ -265,37 +295,93 @@ public class LoginDialog extends JDialog {
         label.setBounds(41, 145, 55, 18);
         panel.add(label);
 
+        //用户名
         textField_2 = new JTextField();
         textField_2.setBounds(123, 22, 150, 25);
         panel.add(textField_2);
         textField_2.setColumns(10);
-
+        //验证码
         textField_3 = new JTextField();
         textField_3.setBounds(123, 80, 150, 25);
         panel.add(textField_3);
         textField_3.setColumns(10);
-
-        textField_4 = new JTextField();
-        textField_4.setBounds(123, 113, 150, 25);
-        panel.add(textField_4);
-        textField_4.setColumns(10);
-
-        textField_5 = new JTextField();
-        textField_5.setBounds(123, 145, 150, 25);
-        panel.add(textField_5);
-        textField_5.setColumns(10);
-
+        //密码
+        passwordField_2 = new JPasswordField();
+        passwordField_2.setBounds(123, 113, 150, 25);
+        panel.add(passwordField_2);
+        passwordField_2.setColumns(10);
+        //确认密码
+        passwordField_3 = new JPasswordField();
+        passwordField_3.setBounds(123, 145, 150, 25);
+        panel.add(passwordField_3);
+        passwordField_3.setColumns(10);
+        //密码不一致
+        JLabel diff_warning = new JLabel("密码不一致");
+        diff_warning.setBounds(123, 175, 150, 25);
+        diff_warning.setForeground(Color.red);
+        diff_warning.setVisible(false);
+        panel.add(diff_warning);
+        
+        
         JButton btnNewButton_2 = new JButton("发送验证码");
         btnNewButton_2.setBounds(123, 52, 83, 23);
         panel.add(btnNewButton_2);
 
         JButton btnNewButton_3 = new JButton("取 消");
-        btnNewButton_3.setBounds(51, 182, 83, 27);
+        btnNewButton_3.setBounds(51, 200, 83, 27);
         panel.add(btnNewButton_3);
 
         JButton btnNewButton_4 = new JButton("确 认");
-        btnNewButton_4.setBounds(190, 182, 83, 27);
+        btnNewButton_4.setBounds(190, 200, 83, 27);
         panel.add(btnNewButton_4);
+        btnNewButton_4.addActionListener(new ActionListener() {
+        	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO 注册事件
+				System.out.println("注册事件");
+				System.out.println(textField_2.getText());
+				System.out.println(passwordField_3.getText());
+				System.out.println(passwordField_3.getText());
+				diff_warning.setVisible(false);
+				//用户名、密码、确认密码不为空
+				if(!StringUtils.isEmpty(textField_2.getText())&&!StringUtils.isEmpty(passwordField_2.getText())&&!StringUtils.isEmpty(passwordField_3.getText())) {
+					if(passwordField_3.getText().equals(passwordField_2.getText())) {
+						String response = transmitData(textField_2.getText(),passwordField_2.getText(),2);
+						String[] resp_arr = response.split("\\|");
+						//注册成功
+						if("s".equals(resp_arr[1])) {
+							JFrame warning = new JFrame();
+							warning.setBounds(400, 150, 500,600);
+							warning.setVisible(true);
+							warning.setTitle("注册成功");
+				            JPanel Panel_warning = new JPanel();
+				            warning.setContentPane(Panel_warning);
+				            JLabel label_warning = new JLabel(resp_arr[2]);
+				           
+				            Panel_warning.add(label_warning);
+						}
+						//注册失败
+						else {
+							JFrame warning = new JFrame();
+							warning.setBounds(400, 150, DIALOG_WIDTH,DIALOG_HEIGHT);
+							warning.setVisible(true);
+							warning.setTitle("注册失败");
+				            JPanel Panel_warning = new JPanel();
+				            warning.setContentPane(Panel_warning);
+				            JLabel label_warning = new JLabel(resp_arr[2]);
+				            Panel_warning.add(label_warning);
+						}
+					}else {
+						System.out.println("密码不一致");
+						diff_warning.setVisible(true);
+					}
+					
+				}
+				
+			}
+        	
+        });
     }
 
 

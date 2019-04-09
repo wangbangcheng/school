@@ -14,7 +14,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
+
 
 import com.wbc.graduation.domain.User;
 import com.wbc.graduation.service.UserService;
@@ -22,22 +24,49 @@ import com.wbc.graduation.serviceImpl.UserServiceImpl;
 
 
 @Component
-public class RecDataUtils  {
+//@DependsOn({""})
+public class RecDataUtils  implements Runnable{
 	
 	@Autowired
     private  UserService userService;
 	
-	@PostConstruct
+	/*public RecDataUtils() {
+		serverRecData();
+	}*/
+	
     public void serverRecData() {
-    	String request = "";
+		try {
+			//1.建立一个服务器Socket(ServerSocket)绑定指定端口
+			final ServerSocket server = new ServerSocket(10011);
+	        Thread th = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					while(true) {
+						try {
+							//2.使用accept()方法阻止等待监听，获得新连接
+				            System.out.println("开始监听...");
+				            Socket socket = server.accept();
+							System.out.println("有链接");
+				            ReceiveData(socket);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+			            
+					}
+				}
+				
+	        });
+	        th.run();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	public void ReceiveData(Socket socket){
+		String request = "";
     	String response = "";
+    	String array[] = null; 
         try {
-            //1.建立一个服务器Socket(ServerSocket)绑定指定端口
-            ServerSocket serverSocket=new ServerSocket(10001);
-            System.out.println("开始监听...");
-            //2.使用accept()方法阻止等待监听，获得新连接
-            Socket socket=serverSocket.accept();
-            System.out.println("有链接");
             //3.获得输入流
             InputStream is=socket.getInputStream();
             BufferedReader br=new BufferedReader(new InputStreamReader(is));
@@ -50,7 +79,7 @@ public class RecDataUtils  {
                 request += rece;
             }
             System.out.println("我是服务器，用户信息为："+request);
-            String array[] = request.split("\\|");
+            array = request.split("\\|");
             switch (array[0]) {
 			case "1":	//登录
 				response = loginCheck(array[1], array[2]);
@@ -68,12 +97,19 @@ public class RecDataUtils  {
             br.close();
             is.close();
             socket.close();
-            serverSocket.close();
+           
         } catch (IOException e) {
             e.printStackTrace();
-        }    
-    }
-    public  String loginCheck(String username,String password){
+        }finally {
+        	if(array!=null) {
+        		RecFileUtils recFileUtils = new RecFileUtils();
+        		recFileUtils.main();
+        	}
+        }
+	}
+	
+    	
+    public String loginCheck(String username,String password){
     	
     	User user = userService.userLoginCheck(username);
 		if(username==null||"".equals(username)){  //没有输入姓名
@@ -108,6 +144,11 @@ public class RecDataUtils  {
         }
 		return "2|f|未知原因错误";
     }
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
 
     
 }
