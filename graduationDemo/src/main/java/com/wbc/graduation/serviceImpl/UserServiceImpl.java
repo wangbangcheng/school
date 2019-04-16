@@ -16,7 +16,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User userLoginCheck(String username) {
 		// TODO Auto-generated method stub
-		return userMapper.selectUserByName(username);
+		User user = new User();
+		user.setUserName(username);
+		return userMapper.selectUserByName(user);
 	}
 
 	@Override

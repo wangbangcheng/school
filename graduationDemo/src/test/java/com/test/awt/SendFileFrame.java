@@ -121,7 +121,7 @@ public class SendFileFrame extends JFrame{
 						if(client_is_file != null ) {
 							byte[] buffer = new byte[client_is_file.available()];
 							client_is_file.read(buffer);
-							DesUtil desUtil = new DesUtil("密码学专栏", buffer);
+							DesUtil desUtil = new DesUtil("你好", buffer);
 							byte[] buffer_encrypt = desUtil.deal(buffer, 1);
 							
 							if(buffer_encrypt != null) {

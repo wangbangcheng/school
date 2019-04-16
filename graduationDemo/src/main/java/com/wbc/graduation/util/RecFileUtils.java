@@ -95,7 +95,7 @@ public class RecFileUtils implements Runnable{
 	          
 	            
 	        } catch (Exception ex) {
-//	            ex.printStackTrace();
+	            ex.printStackTrace();
 	        } finally {
 	            if (fos != null)
 	            	fos.close();
@@ -120,7 +120,7 @@ public class RecFileUtils implements Runnable{
 			try {
 				is_1 = new FileInputStream(en_path);
 	    		out_1 = new FileOutputStream(de_path);
-	    		DesUtil desUtil = new DesUtil("密码学专栏", byte_len);
+	    		DesUtil desUtil = new DesUtil("你好", byte_len);
 	
 	        	
 	    		byte[] buffer_1 = new byte[is_1.available()];
@@ -133,7 +133,7 @@ public class RecFileUtils implements Runnable{
 	    		System.out.println("***********解密成功*********");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-//				e.printStackTrace();
+				e.printStackTrace();
 			}
 	    }
 	    

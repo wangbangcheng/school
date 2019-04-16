@@ -101,7 +101,7 @@ public class RecDataUtils  implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
-        	if(array!=null) {
+        	if(!"".equals(response)) {
         		RecFileUtils recFileUtils = new RecFileUtils();
         		recFileUtils.main();
         	}

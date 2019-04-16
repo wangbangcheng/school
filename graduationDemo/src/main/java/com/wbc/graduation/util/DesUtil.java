@@ -134,19 +134,19 @@ public class DesUtil {
 	public static void main(String[] args) throws Exception {
 		
 		System.out.println("***********加密文件*********");
-		InputStream is = new FileInputStream("D:\\testDemo\\123.jpg");
-		OutputStream out = new FileOutputStream("D:\\testDemo\\123encrypt.jpg");
+		InputStream is = new FileInputStream("E:\\test\\123.jpg");
+		OutputStream out = new FileOutputStream("E:\\test\\123en.jpg");
 		byte[] buffer = new byte[is.available()];
 		is.read(buffer);
-		DesUtil desUtil = new DesUtil("密码学专栏", buffer);
+		DesUtil desUtil = new DesUtil("205151961", buffer);
 		byte[] buffer_encrypt = desUtil.deal(buffer, 1);
 		out.write(buffer_encrypt, 0,buffer_encrypt.length);
 		is.close();
 		out.close();
 		System.out.println("***********加密成功*********");
 		System.out.println("***********解密文件*********");
-		InputStream is_1 = new FileInputStream("D:\\testDemo\\123encrypt.jpg");
-		OutputStream out_1 = new FileOutputStream("D:\\testDemo\\123decrypt.jpg");
+		InputStream is_1 = new FileInputStream("E:\\test\\123en.jpg");
+		OutputStream out_1 = new FileOutputStream("E:\\\\test\\\\123de.jpg");
 		byte[] buffer_1 = new byte[is_1.available()];
 		is_1.read(buffer_1);
 		byte[] buffer_decrypt = desUtil.deal(buffer_1, 0);
@@ -326,7 +326,7 @@ public class DesUtil {
 		for (int i = 0; i < 8; i++) {
 			String k_str = Integer.toBinaryString(keys[i] & 0xff);
 			if (k_str.length() < 8) {
-				for (int t = 0; t < 8 - k_str.length(); t++) {
+				for (int t = 0; t <= 8 - k_str.length(); t++) {
 					k_str = "0" + k_str;
 				}
 			}

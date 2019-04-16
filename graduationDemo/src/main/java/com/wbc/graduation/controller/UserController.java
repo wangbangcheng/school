@@ -40,7 +40,7 @@ public class UserController {
             model.addAttribute("msg1","请输入姓名");
         }else if(user==null||"".trim().equals(user)){ //输入姓名但是姓名错误
             model.addAttribute("msg1","账户不存在，请先注册");
-            return "Login";
+            return "NewLogin";
         }else if(user!=null &(password==null||"".equals(password))){ 
             model.addAttribute("msg2","请输入密码");
         }else if(user!=null &!(user.getPassword().equals(password_md5))) { 
@@ -50,7 +50,7 @@ public class UserController {
         	model.addAttribute("username",user.getUserName());
             return "main";
         }
-		return "Login";
+		return "NewLogin";
 
 	}
 	
@@ -78,6 +78,6 @@ public class UserController {
         	}
         	
         }
-		return "register";
+		return "NewRegister";
 	}
 }

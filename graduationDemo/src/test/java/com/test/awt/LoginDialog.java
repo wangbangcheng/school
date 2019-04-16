@@ -14,6 +14,8 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -101,6 +103,7 @@ public class LoginDialog extends JDialog {
 	 * 						2|s|注册成功
 	 * 						2|f|注册失败
 	 * 						3||异常输入
+	 * 						4||重置监听
 	 */
 	private String transmitData(String username,String password,int flag){
 		String request = "";
@@ -205,12 +208,24 @@ public class LoginDialog extends JDialog {
 				if(!StringUtils.isEmpty(textField.getText())&&!StringUtils.isEmpty(passwordField_1.getText())){
 					
 					String response = transmitData(textField.getText(),passwordField_1.getText(),1);
+					System.out.println(response);
 					String[] resp_arr = response.split("\\|");
 					if("s".equals(resp_arr[1])) {
 						SendFileFrame sendFile = new SendFileFrame();
 						sendFile.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 						sendFile.setVisible(true);
-			
+						//关闭窗口事件-重置监听
+						sendFile.addWindowListener(new WindowAdapter() {
+							 
+							 
+							public void windowClosing(WindowEvent e) {
+							super.windowClosing(e);
+						
+							LoginDialog.this.RefreshSocket(port);
+							
+							}
+						
+						});
 			            //原页面隐藏
 			            LoginDialog.this.setVisible(false);
 					}else {

@@ -14,7 +14,7 @@ public interface UserMapper {
     
 	public User selectByPrimaryKey(User user);
 	
-	public User selectUserByName(String username);
+	public User selectUserByName(User user);
     
     public boolean insertUser(User user);
     
