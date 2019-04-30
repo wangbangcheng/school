@@ -1,4 +1,4 @@
-package com.test.awt;
+package com.test.client;
 
 import java.io.File;
 import java.net.URL;

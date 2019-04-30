@@ -180,8 +180,6 @@ public class LoginDialog extends JDialog {
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(null);
 
-        //设置居中
-        //setLocation(WindowXY.getXY(LoginDialog.this.getSize()));
 
         JButton btnNewButton = new JButton("注 册");
         btnNewButton.addActionListener(new ActionListener() {

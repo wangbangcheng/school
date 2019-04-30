@@ -109,7 +109,7 @@ public class RecFileUtils implements Runnable{
 	            	decryptFile(encrypt_title,decrypt_title,byte_len);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+			//		e.printStackTrace();
 				}
 	        }
 	    }
