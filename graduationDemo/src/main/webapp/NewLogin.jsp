@@ -85,7 +85,7 @@
 										<img src="<%= basePath%>assets/img/logo.png" class="img-responsive" alt="" />
 										<h4>Log In</h4>
 									</div>		
-									<form class="form-horizontal login" action="/user/login" method="post">
+									<form class="form-horizontal login" action="/admin/login" method="post">
 										<div class="bk-padding-left-20 bk-padding-right-20">
 											<div class="form-group">
 												<label>Username</label>

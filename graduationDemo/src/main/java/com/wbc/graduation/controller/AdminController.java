@@ -1,5 +1,7 @@
 package com.wbc.graduation.controller;
 
+import java.util.ArrayList;
+
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -47,7 +49,15 @@ public class AdminController {
         }else if (admin!=null &&admin.getPassword().equals(password_md5)){ //姓名密码均正确
         	System.out.println(admin.getName()+":"+admin.getPassword());
         	model.addAttribute("admin",admin);
-            return "main";
+        	ArrayList<User> users = userService.selectAllUser();
+        	for(User a:users) {
+        		System.out.println(a.getUserName());
+        	}
+        	System.out.println("一共有"+users.size()+"个用户");
+        	if(users.size()>0) {
+        		model.addAttribute("users",users);
+        	}
+            return "Main";
         }
 		return "NewLogin";
 		
@@ -94,4 +104,45 @@ public class AdminController {
 		
 	}
 
+	@RequestMapping("/deleteOne")
+	public String deleteOne(@Param("id")String id,Model model) {
+		int userID = Integer.parseInt(id);
+		int[] arr_id = {userID} ;
+		System.out.println(userID);
+		userService.delete(arr_id);
+		
+    	ArrayList<User> users = userService.selectAllUser();
+    	for(User a:users) {
+    		System.out.println(a.getUserName());
+    	}
+    	System.out.println("一共有"+users.size()+"个用户");
+    	if(users.size()>0) {
+    		model.addAttribute("users",users);
+    	}
+        return "Main";	
+	}
+	
+	@RequestMapping("/deleteMore")
+	public void deleteMore(String ids,Model model) {
+		System.out.println(ids);
+		String[] ids_str = ids.split(",");
+		int[] arr_id = new int[ids_str.length];
+		for(int i=0;i<ids_str.length;i++) {
+			arr_id[i] = Integer.parseInt(ids_str[i]);
+		}
+		userService.delete(arr_id);
+    	ArrayList<User> users = userService.selectAllUser();
+    	
+    	System.out.println("一共有"+users.size()+"个用户");
+    	if(users.size()>0) {
+    		model.addAttribute("users",users);
+    	}
+    	if(arr_id.length==0) {
+    		model.addAttribute("msg","未选取删除项！");
+    	}else {
+    		model.addAttribute("msg","删除成功！删除用户编号："+ids);
+    	}
+ 
+		
+	}
 }

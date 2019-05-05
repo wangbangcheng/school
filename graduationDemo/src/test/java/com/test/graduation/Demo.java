@@ -1,4 +1,4 @@
-package com.test.client;
+package com.test.graduation;
 
 import java.io.File;
 import java.net.URL;

@@ -296,16 +296,16 @@ public class LoginDialog extends JDialog {
         lblNewLabel_3.setBounds(41, 29, 55, 18);
         panel.add(lblNewLabel_3);
 
-        JLabel lblNewLabel_4 = new JLabel("验证码");
-        lblNewLabel_4.setBounds(41, 85, 55, 18);
-        panel.add(lblNewLabel_4);
+//        JLabel lblNewLabel_4 = new JLabel("验证码");
+//        lblNewLabel_4.setBounds(41, 85, 55, 18);
+//        panel.add(lblNewLabel_4);
 
         JLabel lblNewLabel_5 = new JLabel("密 码");
-        lblNewLabel_5.setBounds(41, 115, 55, 18);
+        lblNewLabel_5.setBounds(41, 80, 55, 18);
         panel.add(lblNewLabel_5);
 
         JLabel label = new JLabel("确认密码");
-        label.setBounds(41, 145, 55, 18);
+        label.setBounds(41, 119, 55, 18);
         panel.add(label);
 
         //用户名
@@ -314,32 +314,29 @@ public class LoginDialog extends JDialog {
         panel.add(textField_2);
         textField_2.setColumns(10);
         //验证码
-        textField_3 = new JTextField();
-        textField_3.setBounds(123, 80, 150, 25);
-        panel.add(textField_3);
-        textField_3.setColumns(10);
+//        textField_3 = new JTextField();
+//        textField_3.setBounds(123, 80, 150, 25);
+//        panel.add(textField_3);
+//        textField_3.setColumns(10);
         //密码
         passwordField_2 = new JPasswordField();
-        passwordField_2.setBounds(123, 113, 150, 25);
+        passwordField_2.setBounds(123, 80, 150, 25);
         panel.add(passwordField_2);
         passwordField_2.setColumns(10);
         //确认密码
         passwordField_3 = new JPasswordField();
-        passwordField_3.setBounds(123, 145, 150, 25);
+        passwordField_3.setBounds(123, 119, 150, 25);
         panel.add(passwordField_3);
         passwordField_3.setColumns(10);
         //密码不一致
         JLabel diff_warning = new JLabel("密码不一致");
-        diff_warning.setBounds(123, 175, 150, 25);
+        diff_warning.setBounds(123, 145, 150, 25);
         diff_warning.setForeground(Color.red);
         diff_warning.setVisible(false);
         panel.add(diff_warning);
         
         
-        JButton btnNewButton_2 = new JButton("发送验证码");
-        btnNewButton_2.setBounds(123, 52, 83, 23);
-        panel.add(btnNewButton_2);
-
+      
         JButton btnNewButton_3 = new JButton("取 消");
         btnNewButton_3.setBounds(51, 200, 83, 27);
         panel.add(btnNewButton_3);
@@ -385,13 +382,14 @@ public class LoginDialog extends JDialog {
 				            JLabel label_warning = new JLabel(resp_arr[2]);
 				            Panel_warning.add(label_warning);
 						}
+						
 					}else {
 						System.out.println("密码不一致");
 						diff_warning.setVisible(true);
 					}
 					
 				}
-				
+				RefreshSocket(port);
 			}
         	
         });

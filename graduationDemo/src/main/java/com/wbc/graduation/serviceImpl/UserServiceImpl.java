@@ -1,6 +1,8 @@
 package com.wbc.graduation.serviceImpl;
 
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,18 @@ public class UserServiceImpl implements UserService {
 	public User selectByPrimaryKey(User user) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public ArrayList<User> selectAllUser() {
+		
+		return userMapper.selectAll();
+	}
+
+	@Override
+	public void delete(int[] arr_id) {
+		// TODO Auto-generated method stub
+		userMapper.delete(arr_id);
 	}
 	
 }

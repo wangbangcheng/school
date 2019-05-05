@@ -17,6 +17,7 @@
     where ID = #{id,jdbcType=INTEGER}
   </select>
  
+ 
   <insert id="insertUser" parameterType="com.wbc.graduation.domain.User">
     insert into user
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -66,4 +67,18 @@
    	and USER_NAME = #{userName,jdbcType=VARCHAR}
    	</if>
   </select>
+  <select id="selectAll" resultMap= "BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where 1=1
+  </select>
+  
+   <delete id="delete">
+        delete from user
+        where ID IN
+        <foreach collection="arr_id" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
 </mapper>
