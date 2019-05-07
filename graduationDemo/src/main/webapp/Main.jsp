@@ -85,7 +85,7 @@
 				<td>用户名</td>
 				<td>密码</td>
 				<td>可用值</td>
-				<td colspan="2">操作</td>
+				<td colspan="2" align="center">操作</td>
 			</tr>
 	<%
 		for(User a:Users){
@@ -95,8 +95,8 @@
 				<td><%=a.getId() %></td>
 				<td><%=a.getUserName() %></td>
 				<td><%=a.getPassword() %></td>
-				<td><%=a.getHeadImg() %></td>
-				<td><a >修改</a></td>
+				<td></td>
+				<td><a href="*">修改</a></td>
 				<td><a href="javascript: if(window.confirm('是否删除用户《<%=a.getUserName() %>》？')){window.location.href='/admin/deleteOne?id=<%=a.getId() %>'}">删除</a></td>
 			</tr>
 	<%
@@ -125,7 +125,7 @@
 	
 	
 	
-	<p align="center"><a href="NewLogin.jsp">返回</a></p>
+	<p align="center"><a href="${pageContext.request.contextPath}/NewLogin.jsp">返回</a></p>
 	<%-- <p align="center" style="color:red;"><%= request.getAttribute("msg")==null?"":request.getAttribute("msg") %></p> --%>
 </body>
 </html>
