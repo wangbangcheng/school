@@ -120,7 +120,12 @@ public class RecFileUtils implements Runnable{
 			try {
 				is_1 = new FileInputStream(en_path);
 	    		out_1 = new FileOutputStream(de_path);
-	    		DesUtil desUtil = new DesUtil("你好", byte_len);
+	    		//读取密钥文件key.properties
+	    		SecretKey key = new SecretKey();
+	        	String secretKey = key.get();
+	        	System.out.println(secretKey);
+	    		//
+	        	DesUtil desUtil = new DesUtil(secretKey, byte_len);
 	
 	        	
 	    		byte[] buffer_1 = new byte[is_1.available()];

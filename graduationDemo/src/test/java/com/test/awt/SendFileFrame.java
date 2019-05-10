@@ -18,9 +18,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.test.graduation.DesUtil;
+
+
+
+import com.wbc.graduation.util.DesUtil;
+import com.wbc.graduation.util.SecretKey;
 
 public class SendFileFrame extends JFrame{
 
@@ -32,7 +35,7 @@ public class SendFileFrame extends JFrame{
     private String filePath;
     private File file;
     //预加载路径
-    private static final String pre_path = "E:\\FFOutput";
+    private static final String pre_path = "D:\\testDemo";
     
     private JFileChooser Jfile;
     
@@ -94,7 +97,7 @@ public class SendFileFrame extends JFrame{
         Jfile = new JFileChooser(pre_path);
         Jfile.setFileSelectionMode(JFileChooser.FILES_ONLY);
         Jfile.setBorder(new TitledBorder(null, "传输文件", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-	    Jfile.setFileFilter(new FileNameExtensionFilter("image(*.jpg, *.png, *.gif)", "jpg", "png", "gif"));
+//	    Jfile.setFileFilter(new FileNameExtensionFilter("image(*.jpg, *.png, *.gif)", "jpg", "png", "gif"));
 	    
 	    
 	    Jfile.setVisible(false);
@@ -121,7 +124,10 @@ public class SendFileFrame extends JFrame{
 						if(client_is_file != null ) {
 							byte[] buffer = new byte[client_is_file.available()];
 							client_is_file.read(buffer);
-							DesUtil desUtil = new DesUtil("你好", buffer);
+							//读取密钥文件key.properties
+				    		SecretKey key = new SecretKey();
+				        	String secretKey = key.get();
+							DesUtil desUtil = new DesUtil(secretKey, buffer);
 							byte[] buffer_encrypt = desUtil.deal(buffer, 1);
 							
 							if(buffer_encrypt != null) {

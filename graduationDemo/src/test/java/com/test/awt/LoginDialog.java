@@ -362,7 +362,7 @@ public class LoginDialog extends JDialog {
 						//注册成功
 						if("s".equals(resp_arr[1])) {
 							JFrame warning = new JFrame();
-							warning.setBounds(400, 150, 500,600);
+							warning.setBounds(400, 150, DIALOG_WIDTH,DIALOG_HEIGHT);
 							warning.setVisible(true);
 							warning.setTitle("注册成功");
 				            JPanel Panel_warning = new JPanel();

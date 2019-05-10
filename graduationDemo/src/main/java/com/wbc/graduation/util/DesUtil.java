@@ -122,12 +122,18 @@ public class DesUtil {
 	
 	public DesUtil(String key, byte[] content) {
 
+		if("".equals(key)||key==null){
+			key = "20152435";
+		}
 
 		p_origin_length = content.length;
 		generateKeys(key);
 
 	}
 	public  DesUtil(String key, int length) {
+		if("".equals(key)||key==null){
+			key = "20152435";
+		}
 		p_origin_length = length;
 		generateKeys(key);
 	}
