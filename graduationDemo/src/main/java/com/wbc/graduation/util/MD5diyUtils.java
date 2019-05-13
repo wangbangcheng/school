@@ -1,5 +1,6 @@
 package com.wbc.graduation.util;
 
+import org.bouncycastle.util.Arrays;
 import org.springframework.stereotype.Component;
 
 import com.wbc.graduation.exception.Md5EncodeException;
@@ -116,6 +117,7 @@ public class MD5diyUtils {
      * 返回16位密文，实质是返回32位密文的第8~23位密文
      */
     public String encrypt16(String data) throws Md5EncodeException{
+    	
     	return encrypt32(data).substring(8, 24);
     }
     
@@ -127,15 +129,20 @@ public class MD5diyUtils {
     	if(data==null){
     		throw new Md5EncodeException("待加密数据为空");
     	}
-        byte [] data_Bytes=data.getBytes();
-        int byte_Length = data_Bytes.length;	//字节数组长度
+    	//md5加盐方法 这里将待处理数据data倒序进行md5处理
+    	byte[] reversStr = Arrays.reverse(data.getBytes());
+    	System.out.println("待加密数据："+data);
+    	System.out.println("待加密数据倒叙："+ new String(reversStr));
+//        byte [] data_Bytes=data.getBytes();	//原数据
+    	
+        int byte_Length = reversStr.length;		//字节数组长度
         long K = (long)(byte_Length<<3);		//二进制位数k
         int groupCount = byte_Length/64;		//分组个数
 
         for(int i = 0;i < groupCount;i++){		//分块
-        	FGHI(divide(data_Bytes, i*64));		//处理分组
+        	FGHI(divide(reversStr, i*64));		//处理分组
         }
-        padding( byte_Length,data_Bytes,K);		//填充
+        padding( byte_Length,reversStr,K);		//填充
         
         
         
