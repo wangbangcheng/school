@@ -26,4 +26,6 @@ public interface UserMapper {
     public ArrayList<User> selectAll();
     
     public void delete(@Param("arr_id") int[] arr_id);
+    
+    public void update(User user);
 }

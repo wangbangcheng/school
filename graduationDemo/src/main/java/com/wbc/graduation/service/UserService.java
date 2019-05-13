@@ -31,4 +31,9 @@ public interface UserService {
 	 * 删除用户
 	 */
 	public void delete(int[] arr_id);
+	
+	/**
+	 * 修改用户
+	 */
+	public void update(User user);
 }

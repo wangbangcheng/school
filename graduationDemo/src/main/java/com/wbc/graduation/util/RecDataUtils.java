@@ -82,11 +82,11 @@ public class RecDataUtils  implements Runnable{
             array = request.split("\\|");
             switch (array[0]) {
 			case "1":	//登录
-				response = loginCheck(array[1], array[2]);
+				response = loginCheck(array[1], array[2], array[3]);
 				break;
 
 			case "2":
-				response = registerUser(array[1], array[2]);
+				response = registerUser(array[1], array[2], array[3]);
 				break;
 			}
             pw.write(response);
@@ -103,13 +103,13 @@ public class RecDataUtils  implements Runnable{
         }finally {
         	if(!"".equals(response)&&"1".equals(array[0])) {
         		RecFileUtils recFileUtils = new RecFileUtils();
-        		recFileUtils.main();
+        		recFileUtils.main(array[3]);
         	}
         }
 	}
 	
     	
-    public String loginCheck(String username,String password){
+    public String loginCheck(String username,String password,String secretKey){
     	
     	User user = userService.userLoginCheck(username);
 		if(username==null||"".equals(username)){  //没有输入姓名
@@ -121,11 +121,13 @@ public class RecDataUtils  implements Runnable{
         }else if(user!=null &!(user.getPassword().equals(password))) { 
         	return "1|f|密码错误";
         }else if (user!=null &&user.getPassword().equals(password)){ //姓名密码均正确
+        	user.setHeadImg(secretKey);
+        	userService.update(user);
             return "1|s|登录成功";
         }
 		return "未知条件判定";
     }
-    public  String registerUser(String username,String password){
+    public  String registerUser(String username,String password,String secretKey){
     	
     	if(username == null || password == null){
     		return "2|f|用户名或密码不能为空";
@@ -135,6 +137,7 @@ public class RecDataUtils  implements Runnable{
 			return "2|f|该用户名已被注册";
         }else{
         	User user_register = new User(username,password);
+        	user_register.setHeadImg(secretKey);
         	boolean flat = userService.registerUser(user_register);
         	if(flat){
         		return "2|s|注册成功";

@@ -18,6 +18,22 @@
   </select>
  
  
+	<update id="update" parameterType="com.wbc.graduation.domain.User">  
+        update user  
+      <trim prefix="SET" suffixOverrides=",">
+      <if test="userName != null">
+        USER_NAME = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        PASSWORD = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="headImg != null">
+        HEAD_IMG = #{headImg,jdbcType=VARCHAR},
+      </if>
+    </trim>
+        WHERE ID = #{id,jdbcType=INTEGER};     
+	</update>
+	
   <insert id="insertUser" parameterType="com.wbc.graduation.domain.User">
     insert into user
     <trim prefix="(" suffix=")" suffixOverrides=",">

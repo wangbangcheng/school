@@ -32,7 +32,7 @@ public class RecFileUtils implements Runnable{
 	}
 
 //		public static void main(String[] args) {
-		public void main(){
+		public void main(String secretKey){
 	        try {
 	            final ServerSocket server = new ServerSocket(10010);
 	            Thread th = new Thread(new Runnable() {
@@ -45,7 +45,7 @@ public class RecFileUtils implements Runnable{
 	                           Socket socket = server.accept();
 	                           System.out.println("有链接（文件）");
 	                           RecFileUtils test = new RecFileUtils();
-	                           test.receiveFile(socket);
+	                           test.receiveFile(socket,secretKey);
 	                        } catch (Exception e) {
 	                            e.printStackTrace();
 	                        }
@@ -60,7 +60,7 @@ public class RecFileUtils implements Runnable{
 	        }
 	    }
 
-	    private void receiveFile(Socket socket) throws IOException {
+	    private void receiveFile(Socket socket,String secretKey) throws IOException {
 	        byte[] inputByte = null;
 	        int length = 0;
 	        DataInputStream dis = null;
@@ -90,10 +90,7 @@ public class RecFileUtils implements Runnable{
 	                fos.flush();
 	            }
 	            System.out.println("成功接收加密文件");
-	            //des加密 
-	           
-	          
-	            
+
 	        } catch (Exception ex) {
 	            ex.printStackTrace();
 	        } finally {
@@ -106,7 +103,7 @@ public class RecFileUtils implements Runnable{
 	           
 	            try {
 	            	String decrypt_title = pre_Recpath + "\\head_img_decrypt\\" + createRandomNo() +"decrypt"+name;
-	            	decryptFile(encrypt_title,decrypt_title,byte_len);
+	            	decryptFile(encrypt_title,decrypt_title,byte_len,secretKey);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 			//		e.printStackTrace();
@@ -114,17 +111,14 @@ public class RecFileUtils implements Runnable{
 	        }
 	    }
 	    
-	    public static void decryptFile(String en_path,String de_path, int byte_len) {
+	    public static void decryptFile(String en_path,String de_path, int byte_len,String secretKey) {
 	    	InputStream is_1 = null;
 	    	OutputStream out_1 = null;
 			try {
 				is_1 = new FileInputStream(en_path);
 	    		out_1 = new FileOutputStream(de_path);
-	    		//读取密钥文件key.properties
-	    		SecretKey key = new SecretKey();
-	        	String secretKey = key.get();
-	        	System.out.println(secretKey);
-	    		//
+
+	        	System.out.println("解密密钥："+secretKey);
 	        	DesUtil desUtil = new DesUtil(secretKey, byte_len);
 	
 	        	

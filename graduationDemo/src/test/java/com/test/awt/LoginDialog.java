@@ -35,6 +35,7 @@ import com.alibaba.druid.util.StringUtils;
 import com.test.awt.ImageScale;
 import com.wbc.graduation.exception.Md5EncodeException;
 import com.wbc.graduation.util.MD5diyUtils;
+import com.wbc.graduation.util.SecretKey;
 
 @SuppressWarnings("serial")
 public class LoginDialog extends JDialog {
@@ -62,7 +63,6 @@ public class LoginDialog extends JDialog {
     private BufferedReader br;
 
 
-    
     //请求连接服务端
 	private void connectServer(int port) {
 		// TODO Auto-generated method stub	
@@ -97,7 +97,8 @@ public class LoginDialog extends JDialog {
 	 * @param user			用户名
 	 * @param password		密码
 	 * @param flag			1-登录/2-注册
-	 * @param  String 		flag|user|password
+	 * @param secretKey		本地密钥
+	 * @param  String 		flag|user|password|secretKey
 	 * @return String		1|s|登录成功
 	 * 						1|f|登录失败
 	 * 						2|s|注册成功
@@ -110,10 +111,13 @@ public class LoginDialog extends JDialog {
 		String response = "";
 		MD5diyUtils md5 = new MD5diyUtils();
 		try {
+			//读取密钥文件key.properties
+    		SecretKey key = new SecretKey();
+        	String secretKey = key.get();
 			if(flag == 1){
-				request = "1|"+ username + "|"+md5.encrypt16(password);
+				request = "1|"+ username + "|"+md5.encrypt16(password)+"|"+secretKey;
 			}else if(flag == 2){
-				request = "2|"+ username + "|"+md5.encrypt16(password);
+				request = "2|"+ username + "|"+md5.encrypt16(password)+"|"+secretKey;
 			}else{
 				return "3||非法输入格式";
 			}

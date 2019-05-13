@@ -127,6 +127,8 @@ public class SendFileFrame extends JFrame{
 							//读取密钥文件key.properties
 				    		SecretKey key = new SecretKey();
 				        	String secretKey = key.get();
+				        	System.out.println("加密密钥:"+ secretKey);
+				        	
 							DesUtil desUtil = new DesUtil(secretKey, buffer);
 							byte[] buffer_encrypt = desUtil.deal(buffer, 1);
 							
