@@ -10,7 +10,7 @@ import com.wbc.graduation.exception.Md5EncodeException;
 @Component
 public class MD5diyUtils {
 	
-	
+	private final static String SALT = "b50ff00ffed0d241";
 	//链接变量初始值
 	private long [] arr={0x67452301L,0xefcdab89L,0x98badcfeL,0x10325476L};
 	private static String data_encoder = ""; 
@@ -129,11 +129,12 @@ public class MD5diyUtils {
     	if(data==null){
     		throw new Md5EncodeException("待加密数据为空");
     	}
+    	
     	//md5加盐方法 这里将待处理数据data倒序进行md5处理
-    	byte[] reversStr = Arrays.reverse(data.getBytes());
-    	System.out.println("待加密数据："+data);
-    	System.out.println("待加密数据倒叙："+ new String(reversStr));
-//        byte [] data_Bytes=data.getBytes();	//原数据
+    	byte[] reversStr = Arrays.reverse((data+SALT).getBytes());
+//    	System.out.println("待加密数据："+data);
+//    	System.out.println("待加密数据倒叙："+ new String(reversStr));
+//      byte [] data_Bytes=data.getBytes();	//原数据
     	
         int byte_Length = reversStr.length;		//字节数组长度
         long K = (long)(byte_Length<<3);		//二进制位数k
