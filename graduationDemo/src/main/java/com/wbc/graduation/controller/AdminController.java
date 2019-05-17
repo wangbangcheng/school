@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wbc.graduation.domain.Admin;
 import com.wbc.graduation.domain.User;
@@ -41,7 +42,6 @@ public class AdminController {
             model.addAttribute("msg1","请输入用户名或手机号");
         }else if(admin==null||"".trim().equals(admin)){ //输入姓名但是姓名错误
             model.addAttribute("msg1","用户不存在，请先注册");
-            return "NewLogin";
         }else if(admin!=null &(password==null||"".equals(password))){ 
             model.addAttribute("msg2","请输入密码");
         }else if(admin!=null &!(admin.getPassword().equals(password_md5))) { 
@@ -123,7 +123,8 @@ public class AdminController {
 	}
 	
 	@RequestMapping("/deleteMore")
-	public void deleteMore(String ids,Model model) {
+	@ResponseBody
+	public String deleteMore(String ids,Model model) {
 		System.out.println(ids);
 		String[] ids_str = ids.split(",");
 		int[] arr_id = new int[ids_str.length];
@@ -143,6 +144,6 @@ public class AdminController {
     		model.addAttribute("msg","删除成功！删除用户编号："+ids);
     	}
  
-		
+		return "删除成功！本次删除的用户编号："+ids;
 	}
 }

@@ -88,7 +88,7 @@
 									<form class="form-horizontal login" action="/admin/login" method="post">
 										<div class="bk-padding-left-20 bk-padding-right-20">
 											<div class="form-group">
-												<label>Username</label>
+												<label>Name or Phone</label>
 												<div class="input-group input-group-icon">
 													<input type="text" class="form-control bk-radius" name="name" id="name" placeholder="用户名或手机号 "/>
 													<span class="input-group-addon">
@@ -99,7 +99,7 @@
 												</div>
 											</div>											
 											<div class="form-group">
-												<label>Username</label>
+												<label>Password</label>
 												<div class="input-group input-group-icon">
 													<input type="password" class="form-control bk-radius" name = "password" id="password" placeholder="密码"/>
 													<span class="input-group-addon">

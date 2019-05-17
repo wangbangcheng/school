@@ -1,6 +1,6 @@
 #端口号
 server:
- port: 8080 
+ port: 8081 
 #Spring的配置
 spring:
  datasource:
@@ -13,7 +13,7 @@ spring:
   #用户名
   username: root
   #密码
-  password: 123456
+  password: 123
 
  mvc:
   view:

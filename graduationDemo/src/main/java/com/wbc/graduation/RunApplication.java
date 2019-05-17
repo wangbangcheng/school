@@ -20,13 +20,14 @@ public class RunApplication implements BeanFactoryAware,ApplicationRunner {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		SpringApplication.run(RunApplication.class, args);
-		System.out.println("RunApplication succeed!!!!!");
+		
 		 
 	}
 
 @Override
 public void run(ApplicationArguments args) throws Exception {
 	RecDataUtils bean = beanFactory.getBean(RecDataUtils.class);
+	System.out.println("RunApplication succeed!!!!!");
 	bean.serverRecData();
 }
 

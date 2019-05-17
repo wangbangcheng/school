@@ -89,6 +89,7 @@ public class RecDataUtils  implements Runnable{
 				response = registerUser(array[1], array[2], array[3]);
 				break;
 			}
+            System.out.println("向客户端发送反馈信息："+response);
             pw.write(response);
             pw.flush();
             //5.关闭资源

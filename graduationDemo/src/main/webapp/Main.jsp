@@ -39,11 +39,12 @@
 					   url: "/admin/deleteMore",
 					   data: "ids="+ids,
 					   success: function(msg){
-					     
+						   alert(msg);
+						   window.location.reload();
 					   }
 					});
-				alert("删除成功！删除用户编号："+ids);
-			    window.location.reload();
+				
+			    //
 			}
 			
 		})
@@ -53,6 +54,7 @@
 
 <style>
 	.table{
+		margin-top:200px;
 		background-color:gray;
 	}
 	
@@ -80,12 +82,12 @@
 	<form action="userhd?type=delete_manybook" method="post">
 		<table border="0" cellpadding="10px" cellspacing="1px" class="table" align="center">
 			<tr>
-				<td>勾选</td>
-				<td>编号</td>
-				<td>用户名</td>
-				<td>密码</td>
-				<td>可用值</td>
-				<td colspan="2" align="center">操作</td>
+				<td align="center">勾选</td>
+				<td align="center">编号</td>
+				<td align="center">用户名</td>
+				<td align="center">密码</td>
+				<td align="center">密钥</td>
+				<td align="center">操作</td>
 			</tr>
 	<%
 		for(User a:Users){
@@ -95,9 +97,8 @@
 				<td><%=a.getId() %></td>
 				<td><%=a.getUserName() %></td>
 				<td><%=a.getPassword() %></td>
-				<td></td>
-				<td><a href="*">修改</a></td>
-				<td><a href="javascript: if(window.confirm('是否删除用户《<%=a.getUserName() %>》？')){window.location.href='/admin/deleteOne?id=<%=a.getId() %>'}">删除</a></td>
+				<td><%=a.getHeadImg() %></td>
+				<td><a href="javascript: if(window.confirm('是否删除用户《<%=a.getUserName() %>》？')){window.location.href='/admin/deleteOne?id=<%=a.getId() %>';alert('删除成功！')}">删除</a></td>
 			</tr>
 	<%
 		}		
