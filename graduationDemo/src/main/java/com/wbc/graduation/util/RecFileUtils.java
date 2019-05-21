@@ -45,7 +45,10 @@ public class RecFileUtils implements Runnable{
 	                           Socket socket = server.accept();
 	                           System.out.println("有链接（文件）");
 	                           RecFileUtils test = new RecFileUtils();
-	                           test.receiveFile(socket,secretKey);
+	                           boolean flag = test.receiveFile(socket,secretKey);
+	                           if(!flag){
+	                        	   break;
+	                           }
 	                        } catch (Exception e) {
 	                            e.printStackTrace();
 	                        }
@@ -55,12 +58,13 @@ public class RecFileUtils implements Runnable{
 
 	            });
 	            th.run();
+	            server.close();
 	        } catch (Exception ex) {
 	            ex.printStackTrace();
 	        }
 	    }
 
-	    private void receiveFile(Socket socket,String secretKey) throws IOException {
+	    private boolean receiveFile(Socket socket,String secretKey) throws IOException {
 	        byte[] inputByte = null;
 	        int length = 0;
 	        DataInputStream dis = null;
@@ -72,6 +76,10 @@ public class RecFileUtils implements Runnable{
 	        try {
 	        	dis = new DataInputStream(socket.getInputStream());
 	        	name = dis.readUTF();
+	        	if("退出登录".equals(name)){
+	        		System.out.println("退出文件监听端口！");
+	        		return false;
+	        	}
 	        	encrypt_title = pre_Recpath + "\\head_img_encrypt\\"+createRandomNo()+"encrypt"+name;
 	        	file_encrypt = new File(encrypt_title);
 	        	byte_len = dis.readInt();
@@ -109,6 +117,7 @@ public class RecFileUtils implements Runnable{
 			//		e.printStackTrace();
 				}
 	        }
+			return true;
 	    }
 	    
 	    public static void decryptFile(String en_path,String de_path, int byte_len,String secretKey) {

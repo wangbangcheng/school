@@ -2,6 +2,7 @@ package com.test.awt;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -9,6 +10,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -30,6 +32,10 @@ import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.border.TitledBorder;
+
+import org.pushingpixels.substance.api.skin.SubstanceOfficeBlack2007LookAndFeel;
+import org.pushingpixels.substance.api.skin.SubstanceOfficeBlue2007LookAndFeel;
+import org.pushingpixels.substance.api.skin.SubstanceOfficeSilver2007LookAndFeel;
 
 import com.alibaba.druid.util.StringUtils;
 import com.test.awt.ImageScale;
@@ -164,7 +170,9 @@ public class LoginDialog extends JDialog {
             LoginDialog dialog = new LoginDialog();
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             dialog.setVisible(true);
+          
             
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -174,6 +182,22 @@ public class LoginDialog extends JDialog {
      * Create the dialog.
      */
     public LoginDialog() {
+    	try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(LoginDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(LoginDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(LoginDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(LoginDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
     	connectServer(port);
     	setTitle("客户端登录/验证");
         setAlwaysOnTop(true);
@@ -213,18 +237,27 @@ public class LoginDialog extends JDialog {
 					System.out.println(response);
 					String[] resp_arr = response.split("\\|");
 					if("s".equals(resp_arr[1])) {
-						SendFileFrame sendFile = new SendFileFrame();
-						sendFile.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+						SendFileFrame sendFile = new SendFileFrame(textField.getText());
+						sendFile.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 						sendFile.setVisible(true);
+						JButton exitLoginBtn = new JButton("退出登录");
+						sendFile.contentPanel_1.add(exitLoginBtn);
+						exitLoginBtn.addActionListener(new ActionListener() {
+				            public void actionPerformed(ActionEvent arg0) {
+				            	sendFile.exitLoginEvent();
+				            	LoginDialog.this.RefreshSocket(port);
+				            	LoginDialog.this.setVisible(true);
+				            }
+						});
 						//关闭窗口事件-重置监听
 						sendFile.addWindowListener(new WindowAdapter() {
 							 
 							 
 							public void windowClosing(WindowEvent e) {
-							super.windowClosing(e);
-						
-							LoginDialog.this.RefreshSocket(port);
-							
+								sendFile.exitLoginEvent();
+								super.windowClosing(e);
+								LoginDialog.this.RefreshSocket(port);
+								LoginDialog.this.setVisible(true);
 							}
 						
 						});
@@ -235,13 +268,24 @@ public class LoginDialog extends JDialog {
 						warning.setBounds(400, 150, DIALOG_WIDTH,DIALOG_HEIGHT);
 						warning.setVisible(true);
 						warning.setTitle("登录失败");
+						warning.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			            JPanel Panel_warning = new JPanel();
 			            warning.setContentPane(Panel_warning);
 			            JLabel label_warning = new JLabel(resp_arr[2]);
 			            Panel_warning.add(label_warning);
 			            
 			            RefreshSocket(port);
-			            
+			            warning.addWindowListener(new WindowAdapter() {
+			            	 
+			            	 
+			            	public void windowClosing(WindowEvent e) {
+				            	super.windowClosing(e);
+				            	//加入动作
+				            	LoginDialog.this.setVisible(true);
+				            	//
+			            	 }
+			            	 
+			            });
 					}
 					
 					
@@ -363,28 +407,56 @@ public class LoginDialog extends JDialog {
 					if(passwordField_3.getText().equals(passwordField_2.getText())) {
 						String response = transmitData(textField_2.getText(),passwordField_2.getText(),2);
 						String[] resp_arr = response.split("\\|");
-						//注册成功
+						//注册成功 弹出时隐藏主窗口，退出时显示主窗口
 						if("s".equals(resp_arr[1])) {
+							LoginDialog.this.setVisible(false);
 							JFrame warning = new JFrame();
 							warning.setBounds(400, 150, DIALOG_WIDTH,DIALOG_HEIGHT);
 							warning.setVisible(true);
+							warning.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 							warning.setTitle("注册成功");
 				            JPanel Panel_warning = new JPanel();
 				            warning.setContentPane(Panel_warning);
 				            JLabel label_warning = new JLabel(resp_arr[2]);
-				           
 				            Panel_warning.add(label_warning);
+				            
+				            warning.addWindowListener(new WindowAdapter() {
+				            	 
+				            	 
+				            	public void windowClosing(WindowEvent e) {
+					            	super.windowClosing(e);
+					            	//加入动作
+					            	LoginDialog.this.setVisible(true);
+					            	//
+				            	 }
+				            	 
+				            });
 						}
 						//注册失败
 						else {
+							LoginDialog.this.setVisible(false);
 							JFrame warning = new JFrame();
 							warning.setBounds(400, 150, DIALOG_WIDTH,DIALOG_HEIGHT);
 							warning.setVisible(true);
+							warning.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 							warning.setTitle("注册失败");
 				            JPanel Panel_warning = new JPanel();
 				            warning.setContentPane(Panel_warning);
 				            JLabel label_warning = new JLabel(resp_arr[2]);
 				            Panel_warning.add(label_warning);
+				            
+				            warning.addWindowListener(new WindowAdapter() {
+				            	 
+				            	 
+				            	public void windowClosing(WindowEvent e) {
+					            	super.windowClosing(e);
+					            	//加入动作
+					            	LoginDialog.this.setVisible(true);
+					            	//
+				            	 }
+				            	 
+				            });
+				            
 						}
 						
 					}else {

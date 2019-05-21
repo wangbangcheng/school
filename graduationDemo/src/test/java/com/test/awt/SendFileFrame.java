@@ -22,6 +22,7 @@ import javax.swing.border.TitledBorder;
 
 
 
+
 import com.wbc.graduation.util.DesUtil;
 import com.wbc.graduation.util.SecretKey;
 
@@ -29,8 +30,8 @@ public class SendFileFrame extends JFrame{
 
 	JPanel contentPanel_1 = new JPanel();
 	
-	private static final int JFrame_WIDTH=500;
-    private static final int JFrame_HEIGHT=350;
+	private static final int JFrame_WIDTH=400;
+    private static final int JFrame_HEIGHT=100;
 	
     private String filePath;
     private File file;
@@ -48,18 +49,20 @@ public class SendFileFrame extends JFrame{
     
     
     public static void main(String[] args) {
-    	SendFileFrame main = new SendFileFrame();
+    	SendFileFrame main = new SendFileFrame("123");
     	main.setDefaultCloseOperation(EXIT_ON_CLOSE);
     	main.setVisible(true);
 	}
     
     //请求连接服务端
-   	private void connectServer(int port) {
+   	public void connectServer(int port) {
    		// TODO Auto-generated method stub	
    		try {
    			System.out.println("请求连接服务端（传输文件端口）");
    			client_socket_file = new Socket();
    			client_socket_file.connect(new InetSocketAddress(hostIP, port),10 * 1000);
+   			client_os_file = new DataOutputStream(client_socket_file.getOutputStream());
+
    			System.out.println("请求成功（传输文件端口）");
    		} catch (IOException e) {
    			// TODO Auto-generated catch block
@@ -67,7 +70,7 @@ public class SendFileFrame extends JFrame{
    		}
    	}
    	//关闭socket
-   	private void closeConnect() {
+   	public void closeConnect() {
    		if(client_socket_file != null) {
    			try {
    				client_socket_file.close();
@@ -84,7 +87,7 @@ public class SendFileFrame extends JFrame{
    		connectServer(port);
    	}
     
-    public SendFileFrame() {
+    public SendFileFrame(String username) {
     	connectServer(port_file);
     	setTitle("用户主页面");
         setAlwaysOnTop(true);
@@ -92,7 +95,7 @@ public class SendFileFrame extends JFrame{
         setBounds(400, 150, JFrame_WIDTH,JFrame_HEIGHT);
         getContentPane().setLayout(new BorderLayout());
         setContentPane(contentPanel_1);
-        contentPanel_1.setBorder(new EmptyBorder(5, 5, 5, 5));
+        contentPanel_1.setBorder(new TitledBorder(null, "用户："+username, TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		
         Jfile = new JFileChooser(pre_path);
         Jfile.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -109,6 +112,7 @@ public class SendFileFrame extends JFrame{
         sendFileBtn.addActionListener(new ActionListener() {
            
         	public void actionPerformed(ActionEvent arg0) {
+        		SendFileFrame.this.setVisible(false);
         		Jfile.setVisible(true);
         		int result = Jfile.showDialog(new JLabel(), "选择");
         	    if(result == Jfile.APPROVE_OPTION) {
@@ -119,8 +123,8 @@ public class SendFileFrame extends JFrame{
         	    	System.out.println(filePath);
                     
         	    	try {
-						client_is_file = new FileInputStream(filePath);
-						client_os_file = new DataOutputStream(client_socket_file.getOutputStream());
+        	   			client_is_file = new FileInputStream(filePath);
+        				
 						if(client_is_file != null ) {
 							byte[] buffer = new byte[client_is_file.available()];
 							client_is_file.read(buffer);
@@ -156,7 +160,7 @@ public class SendFileFrame extends JFrame{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}finally {
-						
+						SendFileFrame.this.setVisible(true);
 					}
 
         	    }
@@ -164,10 +168,22 @@ public class SendFileFrame extends JFrame{
             }
         });
         contentPanel_1.add(sendFileBtn);
-        
-		
-		
 	}
-	
+    //退出登录/关闭窗口事件  关闭文件监听端口
+    public void exitLoginEvent(){
+    	try {
+    		RefreshSocket(port_file);
+			client_os_file.writeUTF("退出登录");
+			if(client_os_file!=null){
+				client_os_file.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally{
+			
+		}
+    	SendFileFrame.this.dispose();
+	}
+    //窗口关闭事件
 	
 }
