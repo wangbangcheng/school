@@ -159,7 +159,7 @@ public class MD5diyUtils {
         	}else if(Long.toHexString(arr[i] & 0xFF00).length() == 3){
         		data_encoder += Long.toHexString(arr[i] & 0xFF) +
 	            		"0" +
-        				Long.toHexString((arr[i] & 0xFF0000) >> 8)+
+        				Long.toHexString((arr[i] & 0xFF00) >> 8)+
 	            		Long.toHexString((arr[i] & 0xFF0000) >> 16) +
 	            		Long.toHexString((arr[i] & 0xFF000000) >> 24);
         	}else if(Long.toHexString(arr[i] & 0xFF0000).length() == 5){

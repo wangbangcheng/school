@@ -102,7 +102,7 @@ public class RecDataUtils  implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
-        	if(!"".equals(response)&&"1".equals(array[0])) {
+        	if(!"".equals(response)&&"1".equals(response.split("\\|")[0])) {
         		RecFileUtils recFileUtils = new RecFileUtils();
         		recFileUtils.main(array[3]);
         	}
@@ -114,13 +114,13 @@ public class RecDataUtils  implements Runnable{
     	
     	User user = userService.userLoginCheck(username);
 		if(username==null||"".equals(username)){  //没有输入姓名
-			return "1|f|用户名不能为空";
+			return "0|f|用户名不能为空";
         }else if(user==null||"".trim().equals(user)){ //输入姓名但是姓名错误
-            return "1|f|不存在该用户";
+            return "0|f|不存在该用户";
         }else if(user!=null &(password==null||"".equals(password))){ 
-        	return "1|f|密码不能为空";
+        	return "0|f|密码不能为空";
         }else if(user!=null &!(user.getPassword().equals(password))) { 
-        	return "1|f|密码错误";
+        	return "0|f|密码错误";
         }else if (user!=null &&user.getPassword().equals(password)){ //姓名密码均正确
         	user.setHeadImg(secretKey);
         	userService.update(user);
@@ -131,11 +131,11 @@ public class RecDataUtils  implements Runnable{
     public  String registerUser(String username,String password,String secretKey){
     	
     	if(username == null || password == null){
-    		return "2|f|用户名或密码不能为空";
+    		return "0|f|用户名或密码不能为空";
 		}
 		User user = userService.userLoginCheck(username);
 		if( user != null){  
-			return "2|f|该用户名已被注册";
+			return "0|f|该用户名已被注册";
         }else{
         	User user_register = new User(username,password);
         	user_register.setHeadImg(secretKey);
@@ -146,7 +146,7 @@ public class RecDataUtils  implements Runnable{
         	}
         	
         }
-		return "2|f|未知原因错误";
+		return "0|f|未知原因错误";
     }
 	@Override
 	public void run() {
