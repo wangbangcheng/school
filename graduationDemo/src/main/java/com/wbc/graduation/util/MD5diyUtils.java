@@ -184,7 +184,14 @@ public class MD5diyUtils {
         	}
   
         }
-        return data_encoder;
+        //数据归原
+        arr[0]= 0x67452301L;
+        arr[1]= 0xefcdab89L;
+        arr[2]= 0x98badcfeL;
+        arr[3]= 0x10325476L;
+        String ret_data = data_encoder;
+        data_encoder = "";
+        return ret_data;
     }
     
     //从inputBytes的索引开始取512位，作为新的512bit的分组

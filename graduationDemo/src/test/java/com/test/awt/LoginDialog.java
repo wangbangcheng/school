@@ -115,15 +115,17 @@ public class LoginDialog extends JDialog {
 	private String transmitData(String username,String password,int flag){
 		String request = "";
 		String response = "";
-		MD5diyUtils md5 = new MD5diyUtils();
+
 		try {
+			MD5diyUtils md5 = new MD5diyUtils();
+			String password_en = md5.encrypt16(password);
 			//读取密钥文件key.properties
     		SecretKey key = new SecretKey();
         	String secretKey = key.get();
 			if(flag == 1){
-				request = "1|"+ username + "|"+md5.encrypt16(password)+"|"+secretKey;
+				request = "1|"+ username + "|"+password_en+"|"+secretKey;
 			}else if(flag == 2){
-				request = "2|"+ username + "|"+md5.encrypt16(password)+"|"+secretKey;
+				request = "2|"+ username + "|"+password_en+"|"+secretKey;
 			}else{
 				return "3||非法输入格式";
 			}
@@ -231,9 +233,10 @@ public class LoginDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO 登录事件
-				if(!StringUtils.isEmpty(textField.getText())&&!StringUtils.isEmpty(passwordField_1.getText())){
-					
-					String response = transmitData(textField.getText(),passwordField_1.getText(),1);
+				String password = String.valueOf(passwordField_1.getPassword());
+				System.out.println("密码"+password);
+				if(!StringUtils.isEmpty(textField.getText())&&!StringUtils.isEmpty(password)){
+					String response = transmitData(textField.getText(),password,1);
 					System.out.println(response);
 					String[] resp_arr = response.split("\\|");
 					if("s".equals(resp_arr[1])) {
@@ -264,6 +267,7 @@ public class LoginDialog extends JDialog {
 			            //原页面隐藏
 			            LoginDialog.this.setVisible(false);
 					}else {
+						LoginDialog.this.setVisible(false);
 						JFrame warning = new JFrame();
 						warning.setBounds(400, 150, DIALOG_WIDTH,DIALOG_HEIGHT);
 						warning.setVisible(true);
@@ -282,6 +286,7 @@ public class LoginDialog extends JDialog {
 				            	super.windowClosing(e);
 				            	//加入动作
 				            	LoginDialog.this.setVisible(true);
+				            	
 				            	//
 			            	 }
 			            	 
