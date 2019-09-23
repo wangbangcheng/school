@@ -100,7 +100,7 @@ public class RecFileUtils implements Runnable{
 	            System.out.println("成功接收加密文件");
 
 	        } catch (Exception ex) {
-	            ex.printStackTrace();
+	           // ex.printStackTrace();
 	        } finally {
 	            if (fos != null)
 	            	fos.close();
@@ -141,7 +141,7 @@ public class RecFileUtils implements Runnable{
 	    		System.out.println("***********解密成功*********");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 	    }
 	    

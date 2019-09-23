@@ -352,7 +352,7 @@ public class DesUtil {
 		/*********** PC-1压缩 ****************/
 		int[] k_new_bit = new int[56];
 		for (int i = 0; i < PC1.length; i++) {
-			k_new_bit[i] = k_bit[PC1[i] - 1];// ///这个减1注意点
+			k_new_bit[i] = k_bit[PC1[i] - 1];
 		}
 		/**************************/
 		int[] c0 = new int[28];

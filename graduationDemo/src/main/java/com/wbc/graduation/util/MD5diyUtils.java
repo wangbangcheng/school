@@ -14,7 +14,7 @@ public class MD5diyUtils {
 	//链接变量初始值
 	private long [] arr={0x67452301L,0xefcdab89L,0x98badcfeL,0x10325476L};
 	private static String data_encoder = ""; 
-    //算法中常数M[i][j],赋值规则为4294967296*abs(sin(i))的整数部分，i是当前轮换次数，单位是弧度
+    //算法中常数t[i][j],赋值规则为4294967296*abs(sin(i))的整数部分，i是当前轮换次数，单位是弧度
     //这里方便起见，将所有值列在数组M[][]下
     static final long t[][] = {
 		{0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
